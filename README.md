@@ -52,6 +52,13 @@ func main() int {
 }
 ```
 
+To compile any example from the **examples** folder, compile and run it with:
+```
+shield examples/example.sword -o example
+./example
+```
+
+
 ## Implementation Status
 
 | Category | C GLFW Function | Sword Equivalent | Status |
