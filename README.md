@@ -3,26 +3,35 @@
 Idiomatic, low-overhead GLFW bindings for the Sword programming language. This library provides the foundation for window management, OpenGL context creation, and Vulkan surface querying by wrapping the C Foreign Function Interface (FFI).
 
 ## Dependencies
-The library utilizes Sword's direct dynamic linking via extern "glfw". You do not need to compile GLFW from source alongside your project. Simply ensure that the native GLFW dynamic library (e.g., libglfw.so on Linux, glfw3.dll on Windows, or the Homebrew equivalent on macOS) is available on your host system at runtime.
+The library utilizes Sword's direct dynamic linking via `extern "glfw"`. You do not need to compile GLFW from source alongside your project. Simply ensure that the native GLFW dynamic library (e.g., `libglfw.so` on Linux, `glfw3.dll` on Windows, or the Homebrew equivalent on macOS) is available on your host system at runtime.
 
 ## Setup
 
-Since Sword resolves packages directly via directory structure, including **sword-glfw** in your project requires no external package managers or complex build configurations.
+**sword-glfw** is distributed as a standard Sword module (`github.com/dsaragoza/sword-glfw`) and can be added to any Sword project with a `sword.mod` file using `shield`.
 
 **Step-by-step installation:**
 
-1. **Clone this repository** to your local machine:
+1. **Initialize a Sword module** in your project directory (if you do not already have a `sword.mod` file):
    ```bash
-   git clone https://github.com/DiegoSaragozaSilva/sword-glfw.git
+   shield new example.com/my-app
+   cd my-app
    ```
-2. **Copy and paste the glfw folder** from the cloned repository into your target Sword project's source tree.
+2. **Fetch and add `sword-glfw` to your `sword.mod`**:
+   ```bash
+   shield get github.com/dsaragoza/sword-glfw
+   ```
+3. **Import the package** in your `.sword` source files:
+   ```sword
+   import "github.com/dsaragoza/sword-glfw"
+   ```
+   The package is exposed under the `glfw` namespace (`glfw.Init()`, `glfw.CreateWindow()`, etc.).
 
 
 ## Quickstart
 Below is a classic example of creating a window and running a main event loop with an active OpenGL context:
 
-```
-import "glfw"
+```sword
+import "github.com/dsaragoza/sword-glfw"
 
 func main() int {
     mut window glfw.Window = nil 
@@ -30,8 +39,7 @@ func main() int {
         return -1
     }
 
-    window = glfw.CreateWindow(640, 480, "Hello, World!", nil, nil)
-    if window == nil {
+    window = glfw.CreateWindow(640, 480, "Hello, World!", nil, nil) catch {
         glfw.Terminate()
         return -1
     }
@@ -52,10 +60,10 @@ func main() int {
 }
 ```
 
-To compile any example from the **examples** folder, compile and run it with:
-```
-shield examples/example.sword -o example
-./example
+Compile and run your project with:
+```bash
+shield . -o app
+./app
 ```
 
 
@@ -77,7 +85,7 @@ shield examples/example.sword -o example
 | **Diagnostics** | `glfwGetVersionString` | `glfw.GetVersionString()` | Implemented |
 | | `glfwGetError` | `glfw.GetError()` | Implemented |
 | **Vulkan (Base)** | `glfwVulkanSupported` | `glfw.VulkanSupported()` | Implemented |
-| | `glfwGetRequiredInstanceExtensions` | `glfw.GetRequiredInstanceExtensions()` |Implemented |
+| | `glfwGetRequiredInstanceExtensions` | `glfw.GetRequiredInstanceExtensions()` | Implemented |
 | **Vulkan (Surfaces)**| `glfwCreateWindowSurface` | *To be implemented* | Planned |
 | **Input & Events** | `glfwSetKeyCallback`, etc. | *To be implemented* | Planned |
 | **Monitors & Video** | `glfwGetMonitors`, etc. | *To be implemented* | Planned |

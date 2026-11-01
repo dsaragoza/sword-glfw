@@ -3,17 +3,14 @@ package glfw
 import "std/strings"
 import "std/mem"
 
-// Errors
-error AllocatorNotEnoughSize = "The chosen allocator does not have enough size."
-
 // GLFW essential constants
-const True  = 1
-const False = 0
+const GLFW_TRUE  = 1
+const GLFW_FALSE = 0
 
-const ContextVersionMajor   = 0x00022002
-const ContextVersionMinor   = 0x00022003
-const OpenGLProfile         = 0x00022008
-const OpenGLCoreProfile     = 0x00032001
+const GLFW_CONTEXT_VERSION_MAJOR = 0x00022002
+const GLFW_CONTEXT_VERSION_MINOR = 0x00022003
+const GLFW_OPENGL_PROFILE        = 0x00022008
+const GLFW_OPENGL_CORE_PROFILE   = 0x00032001
 
 // Extern functions declarations
 // TODO: Implement glfwCreateWindowSurface
@@ -39,7 +36,7 @@ type Monitor = ?[*]u8
 
 // Idiomatic wrappers
 func Init() bool {
-    return glfwInit() == True
+    return glfwInit() == GLFW_TRUE
 }
 
 func Terminate() void {
@@ -50,8 +47,10 @@ func WindowHint(hint i32, value i32) void {
     glfwWindowHint(hint, value)
 }
 
-func CreateWindow(width i32, height i32, title string, monitor Monitor, share Window) Window { 
-    return glfwCreateWindow(width, height, title.ptr, monitor, share)
+func CreateWindow(width i32, height i32, title string, monitor Monitor, share Window) !Window {
+    mut titleBuffer := [256]u8{}
+    titleP := try strings.ToC(title, titleBuffer[..])
+    return glfwCreateWindow(width, height, titleP, monitor, share)
 }
 
 func DestroyWindow(window Window) void {
@@ -59,7 +58,7 @@ func DestroyWindow(window Window) void {
 }
 
 func WindowShouldClose(window Window) bool {
-    return glfwWindowShouldClose(window) == True
+    return glfwWindowShouldClose(window) == GLFW_TRUE
 }
 
 func PollEvents() void {
@@ -74,8 +73,8 @@ func SwapBuffers(window Window) void {
     glfwSwapBuffers(window)
 }
 
-func GetProcAddress(procname string) ?[*]u8 {
-    return glfwGetProcAddress(procname.ptr)
+func GetProcAddress(procname [*]u8) ?[*]u8 {
+    return glfwGetProcAddress(procname)
 }
 
 func GetVersionString() string {
@@ -83,16 +82,16 @@ func GetVersionString() string {
     return strings.FromC(ptr)
 }
 
-func GetError(description string) i32 {
-    return glfwGetError(description.ptr)
+func GetError() i32 {
+    return glfwGetError(nil)
 }
 
 func GetFramebufferSize(window Window, width *i32, height *i32) void {
     glfwGetFramebufferSize(window, width, height)
 }
 
-func VulkanSupported() i32 {
-    return glfwVulkanSupported() 
+func VulkanSupported() bool {
+    return glfwVulkanSupported() == GLFW_TRUE
 }
 
 func GetRequiredInstanceExtensions(mut alloc mem.Allocator) !?[]string {
@@ -100,7 +99,7 @@ func GetRequiredInstanceExtensions(mut alloc mem.Allocator) !?[]string {
     mut extensions := glfwGetRequiredInstanceExtensions(&count) orelse return nil
  
     // Unpack all instance extensions into a native array of strings 
-    mut _extensions := mem.Alloc[string](alloc, u64(count)) orelse return error.AllocatorNotEnoughSize 
+    mut _extensions := mem.Alloc[string](alloc, u64(count)) orelse return error.OutOfMemory 
     for i in 0..count {
         _extensions[i] = strings.FromC(extensions[i])
     }
