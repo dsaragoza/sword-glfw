@@ -3,9 +3,6 @@ package glfw
 import "std/strings"
 import "std/mem"
 
-// Errors
-error allocatorNotEnoughSize = "The chosen allocator does not have enough size."
-
 // GLFW essential constants
 const GLFW_TRUE  = 1
 const GLFW_FALSE = 0
@@ -100,7 +97,7 @@ func GetRequiredInstanceExtensions(mut alloc mem.Allocator) !?[]string {
     mut extensions := glfwGetRequiredInstanceExtensions(&count) orelse return nil
  
     // Unpack all instance extensions into a native array of strings 
-    mut _extensions := mem.Alloc[string](alloc, u64(count)) orelse return error.allocatorNotEnoughSize 
+    mut _extensions := mem.Alloc[string](alloc, u64(count)) orelse return error.OutOfMemory 
     for i in 0..count {
         _extensions[i] = strings.FromC(extensions[i])
     }
