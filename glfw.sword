@@ -80,8 +80,8 @@ func GetVersionString() string {
     return strings.FromC(ptr)
 }
 
-func GetError(description string) i32 {
-    return glfwGetError(description.ptr)
+func GetError() i32 {
+    return glfwGetError(nil)
 }
 
 func GetFramebufferSize(window Window, width *i32, height *i32) void {
