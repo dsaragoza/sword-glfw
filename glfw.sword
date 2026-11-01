@@ -90,8 +90,8 @@ func GetFramebufferSize(window Window, width *i32, height *i32) void {
     glfwGetFramebufferSize(window, width, height)
 }
 
-func VulkanSupported() i32 {
-    return glfwVulkanSupported() 
+func VulkanSupported() bool {
+    return glfwVulkanSupported() == GLFW_TRUE
 }
 
 func GetRequiredInstanceExtensions(mut alloc mem.Allocator) !?[]string {
