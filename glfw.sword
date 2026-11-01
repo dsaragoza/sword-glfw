@@ -74,8 +74,8 @@ func SwapBuffers(window Window) void {
     glfwSwapBuffers(window)
 }
 
-func GetProcAddress(procname string) ?[*]u8 {
-    return glfwGetProcAddress(procname.ptr)
+func GetProcAddress(procname [*]u8) ?[*]u8 {
+    return glfwGetProcAddress(procname)
 }
 
 func GetVersionString() string {
