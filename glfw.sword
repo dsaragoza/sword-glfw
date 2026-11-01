@@ -47,8 +47,10 @@ func WindowHint(hint i32, value i32) void {
     glfwWindowHint(hint, value)
 }
 
-func CreateWindow(width i32, height i32, title string, monitor Monitor, share Window) Window { 
-    return glfwCreateWindow(width, height, title.ptr, monitor, share)
+func CreateWindow(width i32, height i32, title string, monitor Monitor, share Window) !Window {
+    mut titleBuffer := [256]u8{}
+    titleP := try strings.ToC(title, titleBuffer[..])
+    return glfwCreateWindow(width, height, titleP, monitor, share)
 }
 
 func DestroyWindow(window Window) void {
