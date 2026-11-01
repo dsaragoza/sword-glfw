@@ -39,8 +39,7 @@ func main() int {
         return -1
     }
 
-    window = glfw.CreateWindow(640, 480, "Hello, World!", nil, nil)
-    if window == nil {
+    window = glfw.CreateWindow(640, 480, "Hello, World!", nil, nil) catch {
         glfw.Terminate()
         return -1
     }
